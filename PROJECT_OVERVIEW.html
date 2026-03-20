@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Локальный AI-стек на llamafile</title>
+  <style>
+    :root {
+      --bg: #f2eee6;
+      --panel: rgba(255, 252, 246, 0.9);
+      --ink: #1e1b18;
+      --muted: #655d54;
+      --line: rgba(45, 37, 28, 0.12);
+      --red: #b44725;
+      --green: #195f56;
+      --gold: #c69219;
+      --shadow: 0 30px 80px rgba(59, 41, 18, 0.14);
+      --mono: "SF Mono", "JetBrains Mono", "Menlo", monospace;
+      --serif: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--serif);
+      background:
+        radial-gradient(circle at 0% 0%, rgba(180, 71, 37, 0.14), transparent 25%),
+        radial-gradient(circle at 100% 100%, rgba(25, 95, 86, 0.12), transparent 24%),
+        linear-gradient(135deg, #f6f2e9 0%, #ece4d4 50%, #f7f1e5 100%);
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 22px auto;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 30px;
+      border-radius: 24px;
+      color: #fff8ef;
+      background:
+        linear-gradient(135deg, rgba(22, 95, 86, 0.95), rgba(13, 55, 50, 0.95)),
+        linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0));
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      right: -60px;
+      top: -40px;
+      width: 240px;
+      height: 240px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(255, 213, 128, 0.24), transparent 70%);
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      font: 700 12px/1.2 var(--mono);
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      opacity: 0.92;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 10ch;
+      font-size: clamp(42px, 8vw, 78px);
+      line-height: 0.95;
+      letter-spacing: -0.04em;
+    }
+
+    .lead {
+      max-width: 62ch;
+      margin: 16px 0 0;
+      font-size: clamp(18px, 2vw, 22px);
+      line-height: 1.5;
+      color: rgba(255, 248, 239, 0.9);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 22px;
+    }
+
+    .hero-tile {
+      padding: 16px;
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 18px;
+      background: rgba(255,255,255,0.08);
+    }
+
+    .hero-tile strong {
+      display: block;
+      margin-bottom: 6px;
+      font-family: var(--mono);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+    }
+
+    .hero-tile span {
+      line-height: 1.55;
+      color: rgba(255, 248, 239, 0.92);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .card {
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255, 253, 248, 0.88);
+    }
+
+    .card h2 {
+      margin: 0 0 14px;
+      font-size: 28px;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+    }
+
+    .card p {
+      margin: 0 0 12px;
+      line-height: 1.65;
+      color: var(--muted);
+    }
+
+    .list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .item {
+      padding: 14px 16px;
+      border-radius: 16px;
+      background: #fffaf2;
+      border: 1px solid var(--line);
+    }
+
+    .item strong {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--ink);
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .pill {
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      font: 700 12px/1 var(--mono);
+      background: #fff9ef;
+    }
+
+    .pill.red {
+      color: var(--red);
+      border-color: rgba(180, 71, 37, 0.26);
+      background: rgba(180, 71, 37, 0.08);
+    }
+
+    .pill.green {
+      color: var(--green);
+      border-color: rgba(25, 95, 86, 0.26);
+      background: rgba(25, 95, 86, 0.08);
+    }
+
+    .pill.gold {
+      color: #8f6200;
+      border-color: rgba(198, 146, 25, 0.26);
+      background: rgba(198, 146, 25, 0.1);
+    }
+
+    .code {
+      margin: 0;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: #181410;
+      color: #f7eddd;
+      font: 500 14px/1.65 var(--mono);
+      overflow-x: auto;
+    }
+
+    .wide {
+      margin-top: 18px;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255,253,248,0.92), rgba(243,235,222,0.88));
+    }
+
+    .wide h2 {
+      margin: 0 0 14px;
+      font-size: 32px;
+      letter-spacing: -0.03em;
+    }
+
+    .footer {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    code { font-family: var(--mono); }
+
+    @media (max-width: 920px) {
+      .hero-grid,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .wrap {
+        width: min(100% - 18px, 1180px);
+        padding: 12px;
+      }
+
+      .hero,
+      .card,
+      .wide {
+        border-radius: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <p class="eyebrow">Project Overview</p>
+      <h1>Локальный AI-стек на llamafile</h1>
+      <p class="lead">
+        Практичный локальный стенд для open-source LLM на macOS Apple Silicon:
+        браузерный UI, OpenAI-compatible API, быстрый bootstrap-профиль и основной
+        рабочий профиль для чата, анализа текста, агентных PoC и локальных экспериментов.
+      </p>
+
+      <div class="hero-grid">
+        <div class="hero-tile">
+          <strong>Runtime</strong>
+          <span><code>llamafile v0.9.3</code><br>минимум зависимостей, нативный запуск на Apple Silicon</span>
+        </div>
+        <div class="hero-tile">
+          <strong>UI + API</strong>
+          <span><code>localhost:8080</code><br>встроенный web UI и OpenAI-compatible endpoint</span>
+        </div>
+        <div class="hero-tile">
+          <strong>Profiles</strong>
+          <span><code>1.5B</code> для быстрого старта<br><code>7B</code> как основной рабочий режим</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Что это за проект</h2>
+        <p>
+          Это локальное окружение для запуска open-source языковых моделей без Docker,
+          без оркестрации и без тяжелой инфраструктуры. Проект ориентирован на сценарий
+          “открыл терминал, запустил 1–2 команды, открыл браузер и работаешь”.
+        </p>
+        <p>
+          Вся сборка организована вокруг <code>llamafile</code>, потому что он дает
+          максимально простой путь к локальному запуску модели, web UI и API
+          в одном компактном рантайме.
+        </p>
+        <p>
+          Базовый runtime проекта: <a href="https://github.com/Mozilla-Ocho/llamafile">Mozilla-Ocho/llamafile</a>.
+          Именно на его основе собраны локальный запуск модели, браузерный интерфейс и OpenAI-compatible endpoint.
+        </p>
+        <div class="pill-row">
+          <span class="pill green">Простота</span>
+          <span class="pill green">Стабильность</span>
+          <span class="pill green">Воспроизводимость</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Как он устроен</h2>
+        <div class="list">
+          <div class="item">
+            <strong>Бинарник</strong>
+            <span><code>bin/llamafile</code> запускает модель, UI и API.</span>
+          </div>
+          <div class="item">
+            <strong>Модели</strong>
+            <span><code>models/</code> хранит GGUF-профили для быстрого и основного режима.</span>
+          </div>
+          <div class="item">
+            <strong>Управление</strong>
+            <span><code>start.sh</code>, <code>stop.sh</code>, <code>llm.sh</code>, <code>switch-model.sh</code>.</span>
+          </div>
+          <div class="item">
+            <strong>Интеграция</strong>
+            <span><code>client.py</code> и OpenAI-compatible API для будущих агентов и автоматизации.</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Ключевые возможности</h2>
+        <div class="list">
+          <div class="item">
+            <strong>Локальный чат через браузер</strong>
+            <span>Можно открывать UI на <code>http://127.0.0.1:8080</code> и работать без облака.</span>
+          </div>
+          <div class="item">
+            <strong>OpenAI-compatible API</strong>
+            <span>Подходит для Python-скриптов, локальных сервисов и агентных прототипов.</span>
+          </div>
+          <div class="item">
+            <strong>Быстрое переключение профилей</strong>
+            <span>Можно менять модель между <code>1.5B</code> и <code>7B</code> без ручной правки проекта.</span>
+          </div>
+          <div class="item">
+            <strong>Cloud fallback</strong>
+            <span>Есть шаблон окружения, чтобы позже подменить локальный endpoint на облачный.</span>
+          </div>
+          <div class="item">
+            <strong>Интеграция с OpenClaw и похожими системами</strong>
+            <span>Локальный <code>/v1</code> endpoint можно использовать как backend для OpenAI-compatible agent PoC.</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Почему этот стек полезен</h2>
+        <p>
+          Он закрывает самую частую практическую потребность: быстро иметь под рукой
+          локальную модель для рабочих задач, не превращая ноутбук в инфраструктурный проект.
+        </p>
+        <p>
+          Это особенно удобно, когда нужен приватный локальный контур, когда хочется
+          быстро проверить идею, или когда важно иметь предсказуемый стенд для PoC
+          и агентных экспериментов.
+        </p>
+        <div class="pill-row">
+          <span class="pill red">Без облака по умолчанию</span>
+          <span class="pill gold">Удобно для PoC</span>
+          <span class="pill green">Подходит для локальных агентов</span>
+        </div>
+      </article>
+    </section>
+
+    <section class="wide">
+      <h2>Сценарии применения</h2>
+      <div class="grid">
+        <div class="item">
+          <strong>1. Чат и повседневная работа</strong>
+          <span>Локальные вопросы, черновики, формулировки, быстрые идеи, без отправки данных наружу.</span>
+        </div>
+        <div class="item">
+          <strong>2. Анализ текста</strong>
+          <span>Суммаризация, выжимка, структурирование заметок, черновой разбор документов и длинных текстов.</span>
+        </div>
+        <div class="item">
+          <strong>3. Агентные PoC</strong>
+          <span>Тестирование локальных оркестраторов, prompt chains, CLI-агентов и tool-using сценариев.</span>
+        </div>
+        <div class="item">
+          <strong>4. OpenClaw как локальный agent frontend</strong>
+          <span>Можно подключить этот стек как self-hosted OpenAI-compatible provider и тестировать локальные agent workflows поверх вашего <code>llamafile</code>-endpoint.</span>
+        </div>
+        <div class="item">
+          <strong>5. Локальный API для своих приложений</strong>
+          <span>Можно подключать фронтенды, Python-сервисы, внутренние утилиты и playground-интерфейсы.</span>
+        </div>
+        <div class="item">
+          <strong>6. Резервный автономный режим</strong>
+          <span>Когда не хочется зависеть от облака, квот, сети или внешних API-изменений.</span>
+        </div>
+        <div class="item">
+          <strong>7. Безопасный bootstrap для экспериментов</strong>
+          <span>Можно быстро стартовать на 1.5B, а потом перейти на 7B, когда нужен лучший результат.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Текущий рабочий профиль</h2>
+        <p>
+          Сейчас основной профиль проекта — <code>Qwen2.5-7B-Instruct Q4_K_M</code>.
+          Это основной баланс качества и скорости для машины с 24 ГБ RAM.
+        </p>
+        <pre class="code">./llm.sh use-7b
+./llm.sh restart</pre>
+      </article>
+
+      <article class="card">
+        <h2>Легкий fallback</h2>
+        <p>
+          Если нужен быстрый cold start, меньшее давление на память или оперативный smoke test,
+          можно вернуться на <code>Qwen2.5-1.5B-Instruct Q4_K_M</code>.
+        </p>
+        <pre class="code">./llm.sh use-bootstrap
+./llm.sh restart</pre>
+      </article>
+    </section>
+
+    <section class="wide">
+      <h2>Пример: OpenClaw + локальный endpoint</h2>
+      <p>
+        Этот проект можно использовать как локальный backend для OpenClaw, потому что
+        <code>llamafile</code> поднимает OpenAI-compatible API на <code>http://127.0.0.1:8080/v1</code>.
+      </p>
+      <p>
+        Практически это означает: OpenClaw может ходить не в облачный провайдер, а в ваш локальный
+        endpoint, если вы описываете кастомный OpenAI-compatible provider в своей конфигурации.
+      </p>
+      <pre class="code">{
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "local/qwen2.5-7b-instruct-q4km"
+      }
+    }
+  },
+  "models": {
+    "providers": {
+      "local": {
+        "type": "openai",
+        "baseUrl": "http://127.0.0.1:8080/v1",
+        "apiKey": "local"
+      }
+    }
+  }
+}</pre>
+      <p>
+        Такой сценарий особенно хорош для локальных agent PoC, тестирования prompts и автономных экспериментов.
+      </p>
+      <p>
+        При этом важно честно учитывать ограничения: OpenClaw в официальной документации предупреждает,
+        что локальные small/quantized модели хуже с точки зрения safety и prompt injection, а для серьезных
+        tool-using сценариев лучше использовать максимально сильные локальные модели и большой контекст.
+        Поэтому здесь это стоит позиционировать как хороший локальный PoC-стек, а не как идеальную
+        production-grade основу для сложных автономных агентов.
+      </p>
+      <div class="footer">
+        Основа runtime: <a href="https://github.com/Mozilla-Ocho/llamafile">llamafile GitHub</a>.
+        OpenClaw docs по локальным моделям: <a href="https://docs.openclaw.ai/gateway/local-models">Local Models</a>.
+      </div>
+    </section>
+
+    <section class="wide">
+      <h2>Что можно делать дальше</h2>
+      <div class="list">
+        <div class="item">
+          <strong>Подключить локальный стек к своим агентам</strong>
+          <span>Через <code>client.py</code> или напрямую через <code>/v1/chat/completions</code>.</span>
+        </div>
+        <div class="item">
+          <strong>Добавить собственные system prompts и шаблоны задач</strong>
+          <span>Для анализа документов, QA, прототипов ассистентов и внутренних инструментов.</span>
+        </div>
+        <div class="item">
+          <strong>Сделать cloud fallback без переписывания кода</strong>
+          <span>Шаблон уже лежит в <code>cloud.env.example</code>.</span>
+        </div>
+        <div class="item">
+          <strong>Расширить стек новыми GGUF-моделями</strong>
+          <span>Проект уже поддерживает сценарий аккуратного скачивания и переключения профиля.</span>
+        </div>
+      </div>
+
+      <div class="footer">
+        Проект расположен в <code>~/ai/llamafile-local</code>. Эту страницу можно открывать локально в браузере как обзор системы.
+      </div>
+    </section>
+  </main>
+</body>
+</html>

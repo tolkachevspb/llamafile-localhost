@@ -1,0 +1,374 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>llamafile Local AI Cheat Sheet</title>
+  <style>
+    :root {
+      --bg: #f5efe2;
+      --paper: rgba(255, 252, 246, 0.86);
+      --ink: #1f1a14;
+      --muted: #62584b;
+      --line: rgba(54, 42, 29, 0.14);
+      --accent: #b6461d;
+      --accent-2: #145f59;
+      --accent-3: #d8a227;
+      --shadow: 0 24px 80px rgba(73, 43, 15, 0.15);
+      --mono: "SF Mono", "JetBrains Mono", "Menlo", monospace;
+      --sans: "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Palatino, serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: var(--sans);
+      background:
+        radial-gradient(circle at top left, rgba(214, 131, 49, 0.20), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(20, 95, 89, 0.16), transparent 26%),
+        linear-gradient(135deg, #f7f1e6 0%, #efe5d2 48%, #f6ecd7 100%);
+    }
+
+    .frame {
+      width: min(1120px, calc(100% - 32px));
+      margin: 24px auto;
+      padding: 24px;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: var(--paper);
+      backdrop-filter: blur(14px);
+      box-shadow: var(--shadow);
+    }
+
+    .hero {
+      position: relative;
+      overflow: hidden;
+      padding: 28px;
+      border-radius: 24px;
+      background:
+        linear-gradient(135deg, rgba(182, 70, 29, 0.92), rgba(116, 39, 15, 0.95)),
+        linear-gradient(160deg, rgba(255,255,255,0.08), rgba(255,255,255,0));
+      color: #fff8ef;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -60px -80px auto;
+      width: 260px;
+      height: 260px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(255, 211, 125, 0.42), transparent 68%);
+      pointer-events: none;
+    }
+
+    .eyebrow {
+      margin: 0 0 10px;
+      font: 700 12px/1.2 var(--mono);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    h1 {
+      margin: 0;
+      max-width: 12ch;
+      font-size: clamp(42px, 8vw, 80px);
+      line-height: 0.94;
+      letter-spacing: -0.04em;
+    }
+
+    .lead {
+      max-width: 56ch;
+      margin: 18px 0 0;
+      font-size: clamp(18px, 2vw, 22px);
+      line-height: 1.45;
+      color: rgba(255, 248, 239, 0.9);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 0.95fr;
+      gap: 18px;
+      margin-top: 22px;
+    }
+
+    .hero-card {
+      padding: 16px 18px;
+      border: 1px solid rgba(255, 244, 228, 0.18);
+      border-radius: 18px;
+      background: rgba(255, 250, 243, 0.08);
+    }
+
+    .hero-card strong,
+    .hero-card code {
+      font-family: var(--mono);
+    }
+
+    .hero-card p {
+      margin: 0;
+      font-size: 14px;
+      line-height: 1.6;
+      color: rgba(255, 248, 239, 0.9);
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-top: 18px;
+    }
+
+    .card {
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: rgba(255, 253, 248, 0.82);
+    }
+
+    .card h2 {
+      margin: 0 0 14px;
+      font-size: 24px;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+    }
+
+    .card p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    .chip {
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      font: 700 12px/1 var(--mono);
+      background: #fff9f0;
+      color: var(--ink);
+    }
+
+    .chip.accent {
+      background: rgba(20, 95, 89, 0.1);
+      color: var(--accent-2);
+      border-color: rgba(20, 95, 89, 0.25);
+    }
+
+    .chip.warn {
+      background: rgba(216, 162, 39, 0.12);
+      color: #8b5f00;
+      border-color: rgba(216, 162, 39, 0.28);
+    }
+
+    .cmd {
+      overflow-x: auto;
+      margin: 0;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: #191511;
+      color: #f8eddc;
+      font: 500 14px/1.65 var(--mono);
+    }
+
+    .cmd strong {
+      color: #ffcc71;
+    }
+
+    .note {
+      padding: 14px 16px;
+      border-left: 4px solid var(--accent);
+      border-radius: 14px;
+      background: rgba(182, 70, 29, 0.08);
+      color: var(--ink);
+      line-height: 1.55;
+    }
+
+    .subtle {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .full {
+      margin-top: 18px;
+      padding: 20px;
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255,253,248,0.9), rgba(247,240,228,0.86));
+    }
+
+    .full h2 {
+      margin: 0 0 14px;
+      font-size: 28px;
+      letter-spacing: -0.03em;
+    }
+
+    .footer {
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    code {
+      font-family: var(--mono);
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .frame {
+        width: min(100% - 20px, 1120px);
+        padding: 14px;
+      }
+
+      .hero,
+      .card,
+      .full {
+        border-radius: 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="frame">
+    <section class="hero">
+      <p class="eyebrow">Local AI / macOS / Apple Silicon</p>
+      <h1>Шпаргалка по локальному AI-стеку</h1>
+      <p class="lead">
+        Готовый быстрый лист для ежедневной работы с <code>llamafile</code>,
+        локальным UI, OpenAI-compatible API и переключением профилей модели.
+      </p>
+
+      <div class="hero-grid">
+        <div class="hero-card">
+          <p><strong>UI</strong><br><code>http://127.0.0.1:8080</code></p>
+        </div>
+        <div class="hero-card">
+          <p><strong>API</strong><br><code>http://127.0.0.1:8080/v1</code></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Быстрый старт</h2>
+        <div class="stack">
+          <pre class="cmd">cd ~/ai/llamafile-local
+./llm.sh start
+./llm.sh open</pre>
+          <div class="chip-row">
+            <span class="chip accent">Основной профиль: 7B</span>
+            <span class="chip">UI в браузере</span>
+            <span class="chip">API на localhost</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Проверка стенда</h2>
+        <div class="stack">
+          <pre class="cmd">./llm.sh status
+./llm.sh health
+./llm.sh test "Проверь локальный стенд"</pre>
+          <p class="subtle">
+            Быстро показывает, жив ли процесс, отвечает ли UI и доступен ли OpenAI-compatible API.
+          </p>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Профили модели</h2>
+        <div class="stack">
+          <pre class="cmd">./llm.sh use-bootstrap
+./llm.sh restart</pre>
+          <p><strong>Bootstrap:</strong> <code>1.5B</code>, быстрее и легче.</p>
+          <pre class="cmd">./llm.sh use-7b
+./llm.sh restart</pre>
+          <p><strong>Основной:</strong> <code>7B</code>, лучший баланс под 24 ГБ RAM.</p>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Загрузка моделей</h2>
+        <div class="stack">
+          <pre class="cmd">./llm.sh download recommended</pre>
+          <p><strong>recommended</strong> = рабочий <code>7B</code></p>
+          <pre class="cmd">./download-model.sh bootstrap
+./download-model.sh power</pre>
+          <div class="chip-row">
+            <span class="chip warn">Загрузка умеет resume</span>
+            <span class="chip">curl -C -</span>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="card">
+        <h2>Python и агенты</h2>
+        <div class="stack">
+          <pre class="cmd">python3 client.py "Сделай короткий ответ по-русски"</pre>
+          <pre class="cmd">curl http://127.0.0.1:8080/v1/models</pre>
+          <p class="subtle">
+            <code>client.py</code> автоматически подхватывает активный профиль из <code>config.env</code>.
+          </p>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Логи и остановка</h2>
+        <div class="stack">
+          <pre class="cmd">./llm.sh logs
+./llm.sh stop</pre>
+          <div class="note">
+            Основной лог лежит в <code>logs/llamafile.log</code>. Если UI открылся, а ответов нет, начинайте отсюда.
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="full">
+      <h2>Самый практичный сценарий</h2>
+      <pre class="cmd"><strong># открыть уже работающий стек</strong>
+cd ~/ai/llamafile-local
+./llm.sh open
+
+<strong># если нужно перезапустить</strong>
+./llm.sh restart
+./llm.sh open
+
+<strong># если хочется быстрый профиль</strong>
+./llm.sh use-bootstrap
+./llm.sh restart
+
+<strong># если нужен основной рабочий профиль</strong>
+./llm.sh use-7b
+./llm.sh restart</pre>
+      <div class="footer">
+        Файл можно открывать локально в браузере. Проект: <code>~/ai/llamafile-local</code>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

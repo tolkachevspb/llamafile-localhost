@@ -1,0 +1,20 @@
+# Runtime and models
+bin/llamafile
+models/*.gguf
+
+# Local state
+config.env
+logs/
+run/
+downloads/
+llama.log
+
+# macOS
+.DS_Store
+
+# Python
+__pycache__/
+*.pyc
+
+# Optional local notes
+.env
