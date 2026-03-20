@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Project overview
+    url: https://github.com/tolkachevspb/llamafile-localhost/blob/main/PROJECT_OVERVIEW.html
+    about: Быстрый обзор проекта и его сценариев использования
+  - name: Cheat sheet
+    url: https://github.com/tolkachevspb/llamafile-localhost/blob/main/CHEATSHEET.html
+    about: Короткая операционная шпаргалка по запуску и переключению профилей
