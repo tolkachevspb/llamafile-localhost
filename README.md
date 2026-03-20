@@ -7,6 +7,25 @@
 ![API](https://img.shields.io/badge/API-OpenAI%20compatible-c69219)
 ![Profile](https://img.shields.io/badge/default_profile-Qwen2.5%207B-2e2a24)
 
+## Why This Repo Exists
+
+Этот репозиторий существует для очень практичной задачи: быстро поднять локальную open-source LLM на macOS Apple Silicon без Docker-оркестрации, без тяжелой инфраструктуры и без длинной ручной настройки.
+
+Здесь уже собраны:
+
+- bootstrap-сценарий для первого запуска
+- локальный browser UI
+- OpenAI-compatible API
+- переключение между легким и рабочим профилем модели
+- HTML-страницы с обзором проекта и шпаргалкой
+- база для локальных agent PoC, включая сценарии вроде OpenClaw
+
+Идея репозитория максимально простая:
+
+```bash
+git clone -> bootstrap -> start -> browser
+```
+
 Публичный репозиторий этого проекта рассчитан на сценарий:
 
 ```bash
@@ -21,6 +40,33 @@ cd llamafile_-localhost
 
 - Description: `Local AI stack for macOS Apple Silicon based on llamafile with browser UI, OpenAI-compatible API, model profiles, and bootstrap scripts.`
 - Suggested topics: `llamafile, llm, local-ai, apple-silicon, macos, gguf, openai-compatible, qwen, self-hosted, openclaw`
+
+## At a Glance
+
+| Что | В проекте |
+|---|---|
+| Runtime | `llamafile v0.9.3` |
+| Платформа | macOS Apple Silicon |
+| UI | встроенный web UI на `localhost` |
+| API | OpenAI-compatible `/v1` |
+| Bootstrap-профиль | `Qwen2.5-1.5B-Instruct Q4_K_M` |
+| Основной рабочий профиль | `Qwen2.5-7B-Instruct Q4_K_M` |
+| Для чего | чат, анализ текста, PoC, локальные интеграции, agent-эксперименты |
+| Для чего не рассчитан | enterprise-кластер, multi-node infra, тяжелый production orchestration |
+
+## Who This Is For
+
+- разработчики, которым нужен локальный OpenAI-compatible endpoint
+- пользователи macOS Apple Silicon, которым хочется быстрый self-hosted LLM setup
+- те, кто делает agent PoC, локальные AI-интеграции и playground-эксперименты
+- те, кому важен приватный локальный контур для чата и анализа текста
+
+## Who This Is Not For
+
+- тех, кому нужен Kubernetes, distributed inference или enterprise-оркестрация
+- production-команд, которым нужен жесткий security/safety baseline для сложных агентов
+- сценариев, где обязательно нужны очень большие модели и высокая параллельность
+- пользователей, которые хотят универсальный multi-platform toolkit без привязки к macOS Apple Silicon
 
 ## Что установлено
 
