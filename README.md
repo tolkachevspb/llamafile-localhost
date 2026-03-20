@@ -1,5 +1,12 @@
 # Локальный AI-стек на `llamafile` для macOS Apple Silicon
 
+> Локальный open-source LLM-стек для macOS Apple Silicon с `llamafile`, browser UI, OpenAI-compatible API, HTML-документацией и готовым bootstrap-потоком.
+
+![Platform](https://img.shields.io/badge/platform-macOS%20Apple%20Silicon-1f6f66)
+![Runtime](https://img.shields.io/badge/runtime-llamafile%20v0.9.3-b44725)
+![API](https://img.shields.io/badge/API-OpenAI%20compatible-c69219)
+![Profile](https://img.shields.io/badge/default_profile-Qwen2.5%207B-2e2a24)
+
 Публичный репозиторий этого проекта рассчитан на сценарий:
 
 ```bash
@@ -9,6 +16,11 @@ cd llamafile_-localhost
 ./llm.sh start
 ./llm.sh open
 ```
+
+## GitHub About
+
+- Description: `Local AI stack for macOS Apple Silicon based on llamafile with browser UI, OpenAI-compatible API, model profiles, and bootstrap scripts.`
+- Suggested topics: `llamafile, llm, local-ai, apple-silicon, macos, gguf, openai-compatible, qwen, self-hosted, openclaw`
 
 ## Что установлено
 
