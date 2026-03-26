@@ -18,9 +18,17 @@ for cmd in curl git python3 uname; do
   require_cmd "${cmd}"
 done
 
+os_name="$(uname -s)"
 arch="$(uname -m)"
+
+if [[ "${os_name}" != "Darwin" ]]; then
+  echo "Этот проект рассчитан только на macOS. Обнаружено: ${os_name}"
+  exit 1
+fi
+
 if [[ "${arch}" != "arm64" ]]; then
-  echo "Этот проект оптимизирован под macOS Apple Silicon (arm64). Обнаружено: ${arch}"
+  echo "Этот проект рассчитан только на macOS Apple Silicon (arm64). Обнаружено: ${arch}"
+  exit 1
 fi
 
 mkdir -p "${PROJECT_DIR}/bin" "${PROJECT_DIR}/models" "${PROJECT_DIR}/logs" "${PROJECT_DIR}/run" "${PROJECT_DIR}/downloads"
